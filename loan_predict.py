@@ -10,6 +10,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.compose import TransformedTargetRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 import numpy as np
+from error import ErrorHandler
 
 class SelectColumns(BaseEstimator, TransformerMixin):
 	def __init__(self, columns):
@@ -34,22 +35,17 @@ def score(df, df_x, pipe, grid):
 	search.fit(df_x, df_y)
 	print('\nr^2: ' + str(search.best_score_)) if n == '1' else print('\nMAE: ' + str(search.best_score_))
 
-	try:
-		test_name = input('\nEnter name of file containing test data: ')
-		test_df = pd.read_csv(test_name)
-		test_df = pd.get_dummies(test_df)
-		for col in test_df.columns:
-			print('filling NaN values...')
-			test_df[col].fillna(test_df[col].mean(), inplace=True)
-		best_pipe = search.best_estimator_
-		predicted_ys = best_pipe.predict(test_df)
-		for i in range(len(predicted_ys)): predicted_ys[i] = round(predicted_ys[i])
-		result_df = pd.DataFrame({'id': test_df['id'], 'loan_status': predicted_ys})
-		result_df.to_csv('our_submission.csv', index=False)
-
-	except FileNotFoundError:
-		print("Couldn't find "+test_name)
-		quit()
+	test_name = input('\nEnter name of file containing test data: ')
+	test_df = pd.read_csv(test_name)
+	test_df = pd.get_dummies(test_df)
+	for col in test_df.columns:
+		print('filling NaN values...')
+		test_df[col].fillna(test_df[col].mean(), inplace=True)
+	best_pipe = search.best_estimator_
+	predicted_ys = best_pipe.predict(test_df)
+	for i in range(len(predicted_ys)): predicted_ys[i] = round(predicted_ys[i])
+	result_df = pd.DataFrame({'id': test_df['id'], 'loan_status': predicted_ys})
+	result_df.to_csv('our_submission.csv', index=False)
 
 def gradient_boosting(df, df_x):
 	steps = [('column_select', SelectColumns(df_x.columns)), ('gradient_boosting_regressor', GradientBoostingRegressor(random_state=42))]
@@ -77,8 +73,9 @@ def random_forest(df, df_x):
 	score(df, df_x, pipe, grid)
 
 def main():
-	file_name = input('\nEnter name of file containing training data: ')
+	handler = ErrorHandler()
 	try:
+		file_name = input('\nEnter name of file containing training data: ')
 		with open(file_name, 'r') as file:
 			df = pd.read_csv(file_name)
 			df = pd.get_dummies(df)
@@ -93,10 +90,45 @@ def main():
 					print('\nPlease enter a number 1-3')
 			df_x = df.drop(columns = ['loan_status'])
 			return random_forest(df, df_x) if n == '1' else linear_regression(df, df_x) if n == '2' else gradient_boosting(df, df_x)
-	
 	except FileNotFoundError:
-		print('Could not find '+file_name)
+		handler.fileNotFound(False)
 		main()
+	except OSError:
+		handler.os()
+	except SyntaxError:
+		handler.syntax()
+	except ArithmeticError:
+		handler.arithmeticError()
+	except AttributeError:
+		handler.attributeError()
+	except EOFError:
+		handler.endOfFile()
+	except FloatingPointError:
+		handler.floatingPoint()
+	except ImportError:
+		handler.importation()
+	except IndentationError:
+		handler.indentation()
+	except IndexError:
+		handler.index()
+	except KeyError:
+		handler.keyboard()
+	except KeyboardInterrupt:
+		handler.sql()
+	except UnicodeDecodeError:
+		handler.unicode()
+	except UnicodeEncodeError:
+		handler.unicode()
+	except UnicodeTranslateError:
+		handler.unicode()
+	except UnicodeError:
+		handler.unicode()
+	except ValueError():
+		handler.value()
+	except ZeroDivisionError:
+		handler.zero()
+	except Exception:
+		handler.bsod()
 
 if __name__ == '__main__':
 	main()
