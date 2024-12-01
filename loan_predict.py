@@ -129,6 +129,16 @@ def main():
 		handler.zero()
 	except Exception:
 		handler.bsod()
+	except SystemError:
+		handler.os()
+	except UnboundLocalError:
+		handler.unbound()
+	except SystemExit:
+		handler.sysexit()
+	except MemoryError:
+		handler.memory()
+	except GeneratorExit:
+		handler.generator()
 
 if __name__ == '__main__':
 	main()

@@ -45,9 +45,6 @@ class ErrorHandler():
 	def runtime(self):
 		print("Error: Fatal Runtime Error.")
 		exit(15)
-	def bsod(self):
-		print("Error: BSOD Occurred.")
-		exit(420)
 	def unicode(self):
 		print("Error: A unicode error occurred.")
 		exit(16)
@@ -57,3 +54,18 @@ class ErrorHandler():
 	def zero(self):
 		print("Error: Divide by zero.")
 		exit(18)
+	def unbound(self):
+		print("Error: Unbounded.")
+		exit(19)
+	def sysexit(self):
+		print("Error: System exiting.")
+		exit(20)
+	def memory(self):
+		print("Error: Failed to allocate.")
+		exit(21)
+	def generator(self):
+		print("Error: Failed to generate.")
+		exit(22)
+	def bsod(self):
+		print("Error: BSOD Occurred.")
+		exit(99)
